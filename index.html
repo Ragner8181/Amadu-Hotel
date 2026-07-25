@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Amadu Hotel — Addis Ababa</title>
-<meta name="description" content="Amadu Hotel, Wingate — a quiet, personal stay in Addis Ababa. Reservations by phone only.">
+<meta name="description" content="Amadu Hotel, Wingate — a quiet, personal stay in Addis Ababa. Book online or call the front desk directly.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,300..700,0..100&family=Sora:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -88,7 +88,11 @@ h1,h2,h3,h4{ font-family: var(--display); font-weight: 500; margin: 0 0 0.4em; l
 .btn-gold:hover{ background: var(--gold-soft); }
 .btn-ghost{ background: transparent; color: var(--cloud); border-color: rgba(250,246,236,0.35); }
 .btn-ghost:hover{ border-color: var(--gold); color: var(--gold); }
+.btn-outline{ background: transparent; color: var(--cloud); border-color: var(--gold); }
+.btn-outline:hover{ background: rgba(232,169,60,0.1); }
+.btn-book{ box-shadow: 0 10px 30px rgba(232,169,60,0.35); }
 .btn.full{ width: 100%; justify-content: center; }
+.contact-book-btn{ margin: 6px 0 28px; }
 
 /* ============ NAV ============ */
 .nav{
@@ -152,9 +156,24 @@ h1,h2,h3,h4{ font-family: var(--display); font-weight: 500; margin: 0 0 0.4em; l
 }
 @keyframes twinkleStar{ 0%,100%{ opacity:0.15; } 50%{ opacity:0.8; } }
 
+.hero-parallax{
+  position: absolute; inset: 0;
+  will-change: transform;
+  transition: transform 0.15s ease-out;
+}
 .hero-tower{
   position:absolute; right: 4%; bottom:0; height: 92%; width: auto; max-width: 42%;
   filter: drop-shadow(0 -10px 60px rgba(232,169,60,0.08));
+}
+.hero-vignette{
+  position:absolute; inset:0; pointer-events:none; z-index:1;
+  background:
+    radial-gradient(ellipse at 50% 100%, rgba(232,169,60,0.08) 0%, transparent 55%),
+    radial-gradient(ellipse at center, transparent 40%, rgba(9,6,15,0.55) 100%);
+}
+.hero-grain{
+  position:absolute; inset:0; pointer-events:none; z-index:1; opacity: 0.05; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
 }
 .hero-tower rect#windowGrid, .hero-tower .win{ }
 .win{ fill: var(--gold); animation: winFlicker 6s ease-in-out infinite; }
@@ -206,40 +225,51 @@ section{ padding: 110px 0; }
 .fact-num{ font-size: 1.7rem; color: var(--rust); font-weight: 500; }
 .fact-label{ font-size: 0.82rem; color: var(--coffee-soft); line-height: 1.4; }
 
-.about-photo{ display:grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-.photo-placeholder{
-  background: repeating-linear-gradient(135deg, rgba(43,33,28,0.06) 0 10px, rgba(43,33,28,0.03) 10px 20px), var(--cloud);
-  border: 1.5px dashed rgba(43,33,28,0.28);
-  border-radius: var(--radius);
-  display:flex; flex-direction:column; align-items:center; justify-content:center; gap: 10px;
-  color: var(--coffee-soft); text-align:center; padding: 24px;
-  min-height: 180px;
+.about-photo{ display:grid; grid-template-columns: 1fr 1fr; gap: 18px; perspective: 1000px; }
+
+/* ---- 3D tilt interaction (JS sets --rx/--ry via inline style) ---- */
+.tilt-card{
+  transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateZ(0);
+  transition: transform 0.15s ease-out, box-shadow 0.3s ease;
+  transform-style: preserve-3d;
 }
-.photo-placeholder.tall{ grid-column: 1 / -1; min-height: 320px; }
-.ph-icon{ font-size: 1.8rem; color: var(--rust); }
-.ph-label{ font-size: 0.82rem; line-height: 1.5; }
-.ph-label small{ opacity: 0.65; font-size: 0.78em; }
+
+.scene-block{
+  position: relative; border-radius: var(--radius); overflow: hidden; min-height: 180px;
+  box-shadow: 0 18px 40px rgba(43,33,28,0.16);
+}
+.scene-block.tall{ grid-column: 1 / -1; min-height: 320px; }
+.scene-illustration{ width: 100%; height: 100%; display:block; }
+.scene-tag{
+  position: absolute; left: 16px; bottom: 14px; font-family: var(--mono); font-size: 0.68rem;
+  color: rgba(250,246,236,0.75); background: rgba(15,10,26,0.55); padding: 5px 10px; border-radius: 6px;
+  letter-spacing: 0.03em; text-transform: uppercase; backdrop-filter: blur(4px);
+}
 
 /* ============ ROOMS ============ */
 .rooms{ background: var(--cloud); }
 .rooms h2{ color: var(--ink); font-size: clamp(1.7rem, 3vw, 2.5rem); }
-.room-grid{ display:grid; grid-template-columns: repeat(3, 1fr); gap: 28px; margin-top: 50px; }
+.room-grid{ display:grid; grid-template-columns: repeat(3, 1fr); gap: 28px; margin-top: 50px; perspective: 1200px; }
 .room-card{
   background: var(--parchment); border-radius: var(--radius); overflow: hidden;
   border: 1px solid rgba(43,33,28,0.08);
   position: relative;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  box-shadow: 0 8px 20px rgba(43,33,28,0.06);
 }
-.room-card:hover{ transform: translateY(-6px); box-shadow: 0 20px 40px rgba(43,33,28,0.12); }
+.room-card:hover{ box-shadow: 0 26px 50px rgba(43,33,28,0.16); }
 .room-card.featured{ border: 1px solid var(--gold); }
 .room-flag{
   position:absolute; top: 16px; right: 16px; background: var(--gold); color: var(--ink-2);
   font-size: 0.7rem; font-weight: 700; padding: 5px 12px; border-radius: 999px; z-index: 2;
   text-transform: uppercase; letter-spacing: 0.05em;
 }
-.room-ph{ border-radius: 0; border: none; min-height: 190px; }
+.room-scene{ position: relative; min-height: 190px; overflow: hidden; }
+.room-illustration{ width: 100%; height: 100%; display:block; }
 .room-body{ padding: 26px; }
-.room-body h3{ color: var(--ink); font-size: 1.3rem; margin-bottom: 10px; }
+.room-title-row{ display:flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+.room-body h3{ color: var(--ink); font-size: 1.3rem; margin: 0; }
+.room-price{ color: var(--rust); font-size: 0.98rem; font-weight: 600; white-space: nowrap; }
+.room-price small{ color: var(--coffee-soft); font-weight: 400; font-size: 0.72em; margin-left: 2px; }
 .room-body p{ color: var(--coffee-soft); font-size: 0.94rem; line-height: 1.6; margin-bottom: 16px; }
 .tag-list{ display:flex; flex-wrap: wrap; gap: 8px; }
 .tag-list li{
@@ -326,6 +356,10 @@ a.contact-method:hover{ color: var(--gold); }
 .footer{ background: var(--ink-2); padding: 48px 0 32px; border-top: 1px solid rgba(250,246,236,0.08); }
 .footer-inner{ display:flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; }
 .footer-inner p{ color: rgba(250,246,236,0.55); font-size: 0.86rem; margin: 0; }
+.footer-links{ display:flex; align-items:center; gap: 10px; }
+.footer-links a{ color: var(--gold-soft); font-size: 0.86rem; }
+.footer-links a:hover{ color: var(--gold); text-decoration: underline; }
+.footer-links span{ color: rgba(250,246,236,0.3); }
 .footer-fine{ font-size: 0.76rem !important; color: rgba(250,246,236,0.35) !important; max-width: 520px; }
 
 /* ============ RESPONSIVE ============ */
@@ -382,37 +416,43 @@ a.contact-method:hover{ color: var(--gold); }
   <div class="hero-sky"></div>
   <div class="hero-stars" id="stars"></div>
 
-  <svg class="hero-tower" viewBox="0 0 420 620" preserveAspectRatio="xMidYMax meet" aria-hidden="true">
-    <defs>
-      <linearGradient id="towerBody" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0%" stop-color="#171029"/>
-        <stop offset="55%" stop-color="#211936"/>
-        <stop offset="100%" stop-color="#150F22"/>
-      </linearGradient>
-    </defs>
-    <!-- silhouette of a mid-rise hotel tower -->
-    <rect x="120" y="60" width="180" height="560" fill="url(#towerBody)"/>
-    <rect x="100" y="140" width="220" height="30" fill="#150F22"/>
-    <rect x="140" y="20" width="140" height="60" fill="#171029"/>
-    <rect x="160" y="0" width="100" height="30" fill="#171029"/>
-    <!-- rooftop sign -->
-    <rect x="185" y="-16" width="50" height="10" rx="2" fill="#E8A93C" opacity="0.85"/>
-    <!-- windows grid, generated via JS for twinkle control -->
-    <g id="windowGrid"></g>
-    <!-- entrance canopy -->
-    <rect x="150" y="580" width="120" height="10" fill="#E8A93C" opacity="0.9"/>
-    <rect x="165" y="560" width="90" height="22" fill="#0F0A1A"/>
-  </svg>
+  <div class="hero-parallax" id="heroParallax">
+    <svg class="hero-tower" viewBox="0 0 420 620" preserveAspectRatio="xMidYMax meet" aria-hidden="true">
+      <defs>
+        <linearGradient id="towerBody" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#171029"/>
+          <stop offset="55%" stop-color="#211936"/>
+          <stop offset="100%" stop-color="#150F22"/>
+        </linearGradient>
+      </defs>
+      <!-- silhouette of a mid-rise hotel tower -->
+      <rect x="120" y="60" width="180" height="560" fill="url(#towerBody)"/>
+      <rect x="100" y="140" width="220" height="30" fill="#150F22"/>
+      <rect x="140" y="20" width="140" height="60" fill="#171029"/>
+      <rect x="160" y="0" width="100" height="30" fill="#171029"/>
+      <!-- rooftop sign -->
+      <rect x="185" y="-16" width="50" height="10" rx="2" fill="#E8A93C" opacity="0.85"/>
+      <!-- windows grid, generated via JS for twinkle control -->
+      <g id="windowGrid"></g>
+      <!-- entrance canopy -->
+      <rect x="150" y="580" width="120" height="10" fill="#E8A93C" opacity="0.9"/>
+      <rect x="165" y="560" width="90" height="22" fill="#0F0A1A"/>
+    </svg>
+  </div>
+
+  <div class="hero-vignette" aria-hidden="true"></div>
+  <div class="hero-grain" aria-hidden="true"></div>
 
   <div class="hero-content">
     <p class="eyebrow">Wingate · Addis Ababa</p>
     <h1>A quiet corner of Addis Ababa<br>that remembers your name.</h1>
     <p class="hero-sub">Amadu Hotel sits tucked into a residential fold of Wingate — away from the noise of the avenues, close enough to the city to matter. Guests keep coming back for one reason: the people who run it.</p>
     <div class="hero-actions">
-      <a href="tel:+251911654340" class="btn btn-gold">Call to reserve</a>
+      <a href="https://www.trip.com/hotels/addis-ababa-hotel-detail-13752005/amadu-hotel/" target="_blank" rel="noopener" class="btn btn-gold btn-book">Book online now ↗</a>
+      <a href="tel:+251910625695" class="btn btn-outline">Call to reserve</a>
       <a href="https://www.google.com/maps?q=9.0547547,38.7193205" target="_blank" rel="noopener" class="btn btn-ghost">View on Google Maps ↗</a>
     </div>
-    <p class="hero-note">No online booking — every stay starts with a phone call, the way it always has.</p>
+    <p class="hero-note">Booking opens on our online partner in a new tab — or call the front desk directly, any hour.</p>
   </div>
 
   <div class="hero-scroll" aria-hidden="true"><span></span> scroll</div>
@@ -436,19 +476,49 @@ a.contact-method:hover{ color: var(--gold); }
           <span class="fact-label">Front desk, always staffed, always reachable</span>
         </div>
         <div class="fact">
-          <span class="fact-num mono">1</span>
-          <span class="fact-label">Way to book — a phone call, no app required</span>
+          <span class="fact-num mono">~€47</span>
+          <span class="fact-label">Typical starting rate per night, per partner listings</span>
         </div>
       </div>
     </div>
     <div class="about-photo">
-      <div class="photo-placeholder tall">
-        <span class="ph-icon">◐</span>
-        <span class="ph-label">Photo — hotel exterior / tower<br><small>replace with real image</small></span>
+      <div class="scene-block tall tilt-card">
+        <svg viewBox="0 0 420 320" class="scene-illustration" aria-hidden="true">
+          <defs>
+            <linearGradient id="skyAbout" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#241C3A"/><stop offset="60%" stop-color="#3A2740"/><stop offset="100%" stop-color="#B14A2E"/>
+            </linearGradient>
+          </defs>
+          <rect width="420" height="320" fill="url(#skyAbout)"/>
+          <rect x="150" y="30" width="130" height="290" fill="#171029"/>
+          <g fill="#E8A93C" opacity="0.85">
+            <rect x="164" y="50" width="14" height="16"/><rect x="192" y="50" width="14" height="16"/><rect x="220" y="50" width="14" height="16"/><rect x="248" y="50" width="14" height="16"/>
+            <rect x="164" y="84" width="14" height="16" opacity="0.3"/><rect x="192" y="84" width="14" height="16"/><rect x="220" y="84" width="14" height="16" opacity="0.3"/><rect x="248" y="84" width="14" height="16"/>
+            <rect x="164" y="118" width="14" height="16"/><rect x="192" y="118" width="14" height="16" opacity="0.3"/><rect x="220" y="118" width="14" height="16"/><rect x="248" y="118" width="14" height="16" opacity="0.3"/>
+            <rect x="164" y="152" width="14" height="16" opacity="0.3"/><rect x="192" y="152" width="14" height="16"/><rect x="220" y="152" width="14" height="16"/><rect x="248" y="152" width="14" height="16"/>
+          </g>
+          <rect x="190" y="270" width="40" height="50" fill="#0F0A1A"/>
+          <rect x="200" y="255" width="20" height="8" rx="2" fill="#E8A93C"/>
+        </svg>
+        <span class="scene-tag">Exterior, illustrated</span>
       </div>
-      <div class="photo-placeholder small">
-        <span class="ph-icon">◑</span>
-        <span class="ph-label">Photo — lobby<br><small>replace with real image</small></span>
+      <div class="scene-block small tilt-card">
+        <svg viewBox="0 0 320 220" class="scene-illustration" aria-hidden="true">
+          <defs>
+            <linearGradient id="lobbyGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#3A2F55"/><stop offset="100%" stop-color="#201936"/>
+            </linearGradient>
+          </defs>
+          <rect width="320" height="220" fill="url(#lobbyGrad)"/>
+          <rect x="0" y="180" width="320" height="40" fill="#171029"/>
+          <rect x="30" y="30" width="90" height="130" rx="4" fill="#150F22"/>
+          <rect x="40" y="40" width="70" height="110" fill="#E8A93C" opacity="0.22"/>
+          <rect x="150" y="110" width="120" height="60" rx="8" fill="#F3E9D2"/>
+          <rect x="150" y="110" width="120" height="16" rx="8" fill="#FAF6EC"/>
+          <circle cx="230" cy="60" r="26" fill="#F0C878" opacity="0.5"/>
+          <rect x="212" y="80" width="36" height="30" fill="#241C3A"/>
+        </svg>
+        <span class="scene-tag">Lobby, illustrated</span>
       </div>
     </div>
   </div>
@@ -462,10 +532,35 @@ a.contact-method:hover{ color: var(--gold); }
     <p class="section-lede">Every room keeps the same standard of quiet, clean, and cared-for — the difference is space, and how much city you want in view.</p>
 
     <div class="room-grid">
-      <article class="room-card">
-        <div class="photo-placeholder room-ph"><span class="ph-icon">◐</span><span class="ph-label">Room photo</span></div>
+      <article class="room-card tilt-card">
+        <div class="room-scene">
+          <svg viewBox="0 0 320 220" class="room-illustration" aria-hidden="true">
+            <defs>
+              <linearGradient id="wallStd" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#3A2F55"/><stop offset="100%" stop-color="#241C3A"/>
+              </linearGradient>
+              <radialGradient id="glowStd" cx="50%" cy="30%" r="70%">
+                <stop offset="0%" stop-color="#F0C878" stop-opacity="0.55"/><stop offset="100%" stop-color="#F0C878" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+            <rect width="320" height="220" fill="url(#wallStd)"/>
+            <rect x="0" y="176" width="320" height="44" fill="#171029"/>
+            <rect x="196" y="24" width="88" height="88" rx="4" fill="#150F22"/>
+            <rect x="204" y="32" width="72" height="72" rx="2" fill="#E8A93C" opacity="0.28"/>
+            <circle cx="240" cy="68" r="60" fill="url(#glowStd)"/>
+            <rect x="24" y="120" width="150" height="66" rx="10" fill="#F3E9D2"/>
+            <rect x="24" y="120" width="150" height="20" rx="10" fill="#FAF6EC"/>
+            <rect x="34" y="98" width="34" height="30" rx="8" fill="#FAF6EC"/>
+            <rect x="34" y="98" width="34" height="30" rx="8" fill="none" stroke="#00000010"/>
+            <rect x="24" y="150" width="150" height="36" rx="6" fill="#B14A2E" opacity="0.55"/>
+          </svg>
+          <span class="scene-tag">Standard</span>
+        </div>
         <div class="room-body">
-          <h3>Standard Room</h3>
+          <div class="room-title-row">
+            <h3>Standard Room</h3>
+            <span class="room-price mono">from €35<small>/night</small></span>
+          </div>
           <p>A comfortable, no-clutter room for the traveler who mostly needs a good bed and a quiet night. Seating area, satellite TV, and a bathroom kept spotless.</p>
           <ul class="tag-list">
             <li>Seating area</li><li>Free Wi-Fi</li><li>Flat-screen TV</li>
@@ -473,11 +568,37 @@ a.contact-method:hover{ color: var(--gold); }
         </div>
       </article>
 
-      <article class="room-card featured">
+      <article class="room-card featured tilt-card">
         <span class="room-flag">Most requested</span>
-        <div class="photo-placeholder room-ph"><span class="ph-icon">◑</span><span class="ph-label">Room photo</span></div>
+        <div class="room-scene">
+          <svg viewBox="0 0 320 220" class="room-illustration" aria-hidden="true">
+            <defs>
+              <linearGradient id="wallDlx" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#41304F"/><stop offset="100%" stop-color="#231A38"/>
+              </linearGradient>
+              <radialGradient id="glowDlx" cx="55%" cy="25%" r="75%">
+                <stop offset="0%" stop-color="#E8A93C" stop-opacity="0.6"/><stop offset="100%" stop-color="#E8A93C" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+            <rect width="320" height="220" fill="url(#wallDlx)"/>
+            <rect x="0" y="176" width="320" height="44" fill="#171029"/>
+            <rect x="150" y="16" width="150" height="96" rx="4" fill="#150F22"/>
+            <rect x="160" y="26" width="130" height="76" rx="2" fill="#E8A93C" opacity="0.3"/>
+            <circle cx="225" cy="60" r="70" fill="url(#glowDlx)"/>
+            <rect x="20" y="112" width="170" height="74" rx="10" fill="#F3E9D2"/>
+            <rect x="20" y="112" width="170" height="20" rx="10" fill="#FAF6EC"/>
+            <rect x="30" y="88" width="36" height="32" rx="8" fill="#FAF6EC"/>
+            <rect x="66" y="92" width="36" height="28" rx="8" fill="#FAF6EC" opacity="0.85"/>
+            <rect x="20" y="144" width="170" height="42" rx="6" fill="#B14A2E" opacity="0.6"/>
+            <rect x="210" y="150" width="46" height="36" rx="4" fill="#3F5C4C" opacity="0.7"/>
+          </svg>
+          <span class="scene-tag">Deluxe</span>
+        </div>
         <div class="room-body">
-          <h3>Deluxe Room</h3>
+          <div class="room-title-row">
+            <h3>Deluxe Room</h3>
+            <span class="room-price mono">from €47<small>/night</small></span>
+          </div>
           <p>More breathing room, better light, and the little extras — a proper work surface, better linens, and the details staff quietly take care of before you notice they're missing.</p>
           <ul class="tag-list">
             <li>Extra space</li><li>Work desk</li><li>Premium linens</li><li>Free Wi-Fi</li>
@@ -485,10 +606,36 @@ a.contact-method:hover{ color: var(--gold); }
         </div>
       </article>
 
-      <article class="room-card">
-        <div class="photo-placeholder room-ph"><span class="ph-icon">◒</span><span class="ph-label">Room photo</span></div>
+      <article class="room-card tilt-card">
+        <div class="room-scene">
+          <svg viewBox="0 0 320 220" class="room-illustration" aria-hidden="true">
+            <defs>
+              <linearGradient id="wallSte" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#382C4C"/><stop offset="100%" stop-color="#201936"/>
+              </linearGradient>
+              <radialGradient id="glowSte" cx="50%" cy="25%" r="80%">
+                <stop offset="0%" stop-color="#F0C878" stop-opacity="0.5"/><stop offset="100%" stop-color="#F0C878" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+            <rect width="320" height="220" fill="url(#wallSte)"/>
+            <rect x="0" y="176" width="320" height="44" fill="#171029"/>
+            <rect x="176" y="20" width="120" height="92" rx="4" fill="#150F22"/>
+            <rect x="186" y="30" width="100" height="72" rx="2" fill="#E8A93C" opacity="0.26"/>
+            <circle cx="235" cy="62" r="65" fill="url(#glowSte)"/>
+            <rect x="22" y="118" width="140" height="68" rx="10" fill="#F3E9D2"/>
+            <rect x="22" y="118" width="140" height="20" rx="10" fill="#FAF6EC"/>
+            <rect x="32" y="96" width="34" height="30" rx="8" fill="#FAF6EC"/>
+            <rect x="22" y="148" width="140" height="38" rx="6" fill="#3F5C4C" opacity="0.55"/>
+            <rect x="176" y="132" width="70" height="54" rx="6" fill="#241C3A"/>
+            <rect x="184" y="140" width="54" height="14" rx="3" fill="#F0C878" opacity="0.4"/>
+          </svg>
+          <span class="scene-tag">Suite</span>
+        </div>
         <div class="room-body">
-          <h3>Suite</h3>
+          <div class="room-title-row">
+            <h3>Suite</h3>
+            <span class="room-price mono">from €65<small>/night</small></span>
+          </div>
           <p>For longer stays or guests who want a separate sitting space — a room that feels closer to an apartment than a hotel floor.</p>
           <ul class="tag-list">
             <li>Separate sitting area</li><li>Extended stay friendly</li><li>Free Wi-Fi</li>
@@ -497,7 +644,7 @@ a.contact-method:hover{ color: var(--gold); }
       </article>
     </div>
 
-    <p class="rooms-footnote">Rates and availability are confirmed by phone at the time of your call — there's no online booking to check first.</p>
+    <p class="rooms-footnote">Illustrated room scenes shown above — not real photos of the property. Prices are estimated starting rates drawn from third-party travel listings and change seasonally; confirm the exact rate and availability by phone or when booking online.</p>
   </div>
 </section>
 
@@ -579,24 +726,30 @@ a.contact-method:hover{ color: var(--gold); }
   <div class="wrap contact-grid">
     <div class="contact-copy">
       <p class="eyebrow eyebrow-dark">Reservations</p>
-      <h2>We still do this the old way — by phone.</h2>
-      <p>There's no booking engine here on purpose. Call or message us directly, tell us your dates, and we'll confirm the room and rate ourselves. It usually takes less time than filling out a form.</p>
+      <h2>Book online, or reach us directly.</h2>
+      <p>Book instantly through our online booking partner, call the front desk directly, or send an enquiry below — tell us your dates and we'll confirm the room and rate ourselves.</p>
+
+      <a href="https://www.trip.com/hotels/addis-ababa-hotel-detail-13752005/amadu-hotel/" target="_blank" rel="noopener" class="btn btn-gold full contact-book-btn">Book online now ↗</a>
 
       <div class="contact-methods">
-        <a href="tel:+251911654340" class="contact-method">
+        <a href="tel:+251910625695" class="contact-method">
           <span class="cm-label">Phone</span>
-          <span class="cm-value mono">+251 91 165 4340</span>
+          <span class="cm-value mono">+251 91 062 5695</span>
         </a>
-        <a href="mailto:reservations@amaduhotel.example" class="contact-method">
+        <a href="mailto:amaduhoteltese@gmail.com" class="contact-method">
           <span class="cm-label">Email</span>
-          <span class="cm-value mono">reservations@amaduhotel.example</span>
+          <span class="cm-value mono">amaduhoteltese@gmail.com</span>
         </a>
         <div class="contact-method">
           <span class="cm-label">Address</span>
           <span class="cm-value">Wingate, Addis Ababa, Ethiopia</span>
         </div>
+        <a href="https://www.facebook.com/amaduhoteltese/" target="_blank" rel="noopener" class="contact-method">
+          <span class="cm-label">Facebook</span>
+          <span class="cm-value">Amadu Hotel | Addis Ababa</span>
+        </a>
       </div>
-      <p class="contact-flag">⚠ Placeholder contact details — swap in the hotel's verified phone number and email before this goes live.</p>
+      <p class="contact-flag">⚠ Booking link, phone, and email are sourced from the hotel's own Facebook page and a matching third-party listing — please confirm they're current before this goes live. No verified Instagram, TikTok, or X account was found.</p>
     </div>
 
     <form class="contact-form" id="contactForm">
@@ -618,7 +771,14 @@ a.contact-method:hover{ color: var(--gold); }
       <span class="brand-text">Amadu<em>Hotel</em></span>
     </div>
     <p>Amadu Hotel, Wingate — Addis Ababa, Ethiopia</p>
-    <p class="footer-fine">Independent fan-made concept site for design purposes · Verify all contact details, rates and photos with the hotel directly.</p>
+    <div class="footer-links">
+      <a href="https://www.trip.com/hotels/addis-ababa-hotel-detail-13752005/amadu-hotel/" target="_blank" rel="noopener">Book online</a>
+      <span aria-hidden="true">·</span>
+      <a href="https://www.facebook.com/amaduhoteltese/" target="_blank" rel="noopener">Facebook</a>
+      <span aria-hidden="true">·</span>
+      <a href="tel:+251910625695">Call</a>
+    </div>
+    <p class="footer-fine">Independent fan-made concept site for design purposes · Room illustrations are stylized, not real photos · Verify all contact details, rates, and links with the hotel directly.</p>
   </div>
 </footer>
 
@@ -680,7 +840,44 @@ if (starsWrap) {
   starsWrap.innerHTML = html;
 }
 
+// ---------- Hero cinematic parallax (mouse + gyroscope-free, just mouse) ----------
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const heroSection = document.querySelector('.hero');
+const heroParallax = document.getElementById('heroParallax');
+if (heroSection && heroParallax && !prefersReducedMotion) {
+  heroSection.addEventListener('mousemove', (e) => {
+    const rect = heroSection.getBoundingClientRect();
+    const px = (e.clientX - rect.left) / rect.width - 0.5;
+    const py = (e.clientY - rect.top) / rect.height - 0.5;
+    heroParallax.style.transform = `translate3d(${px * -18}px, ${py * -10}px, 0) scale(1.02)`;
+  }, { passive: true });
+  heroSection.addEventListener('mouseleave', () => {
+    heroParallax.style.transform = 'translate3d(0,0,0) scale(1)';
+  });
+}
+
+// ---------- 3D tilt cards (rooms, about photos) ----------
+const tiltCards = prefersReducedMotion ? [] : document.querySelectorAll('.tilt-card');
+const maxTilt = 7;
+tiltCards.forEach(card => {
+  card.addEventListener('mousemove', (e) => {
+    const rect = card.getBoundingClientRect();
+    const px = (e.clientX - rect.left) / rect.width - 0.5;
+    const py = (e.clientY - rect.top) / rect.height - 0.5;
+    card.style.setProperty('--ry', `${px * maxTilt * 2}deg`);
+    card.style.setProperty('--rx', `${py * -maxTilt * 2}deg`);
+  }, { passive: true });
+  card.addEventListener('mouseleave', () => {
+    card.style.setProperty('--rx', '0deg');
+    card.style.setProperty('--ry', '0deg');
+  });
+});
+
 // ---------- Scroll reveal ----------
+// Note: elements that also use the 3D tilt effect (.tilt-card) get their
+// transform fully owned by the tilt CSS rule (which reads --rx/--ry), so
+// reveal only fades their opacity here rather than setting inline transform,
+// which would otherwise permanently override the tilt.
 const revealTargets = document.querySelectorAll(
   '.room-card, .amenity, .note-card, .about-photo, .loc-map, .contact-form'
 );
@@ -688,7 +885,9 @@ const io = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
       entry.target.style.opacity = '1';
-      entry.target.style.transform = 'translateY(0)';
+      if (!entry.target.classList.contains('tilt-card')) {
+        entry.target.style.transform = 'translateY(0)';
+      }
       io.unobserve(entry.target);
     }
   });
@@ -696,7 +895,9 @@ const io = new IntersectionObserver((entries) => {
 
 revealTargets.forEach(el => {
   el.style.opacity = '0';
-  el.style.transform = 'translateY(18px)';
+  if (!el.classList.contains('tilt-card')) {
+    el.style.transform = 'translateY(18px)';
+  }
   el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
   io.observe(el);
 });
