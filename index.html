@@ -324,6 +324,7 @@ section{ padding: 110px 0; }
 /* ============ CONTACT ============ */
 .contact{ background: var(--ink-2); }
 .contact-grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 60px; }
+.contact-grid-single{ grid-template-columns: 1fr; max-width: 620px; }
 .contact .eyebrow-dark{ color: var(--rust); }
 .contact-copy h2{ color: var(--cloud); font-size: clamp(1.6rem, 2.8vw, 2.3rem); max-width: 480px; }
 .contact-copy p{ color: rgba(250,246,236,0.72); line-height: 1.7; max-width: 460px; margin-bottom: 30px; }
@@ -723,11 +724,11 @@ a.contact-method:hover{ color: var(--gold); }
 
 <!-- ============ CONTACT ============ -->
 <section class="contact" id="contact">
-  <div class="wrap contact-grid">
+  <div class="wrap contact-grid contact-grid-single">
     <div class="contact-copy">
       <p class="eyebrow eyebrow-dark">Reservations</p>
       <h2>Book online, or reach us directly.</h2>
-      <p>Book instantly through our online booking partner, call the front desk directly, or send an enquiry below — tell us your dates and we'll confirm the room and rate ourselves.</p>
+      <p>Book instantly through our online booking partner, or call the front desk directly and we'll confirm the room and rate ourselves.</p>
 
       <a href="https://www.trip.com/hotels/addis-ababa-hotel-detail-13752005/amadu-hotel/" target="_blank" rel="noopener" class="btn btn-gold full contact-book-btn">Book online now ↗</a>
 
@@ -749,18 +750,7 @@ a.contact-method:hover{ color: var(--gold); }
           <span class="cm-value">Amadu Hotel | Addis Ababa</span>
         </a>
       </div>
-      <p class="contact-flag">⚠ Booking link, phone, and email are sourced from the hotel's own Facebook page and a matching third-party listing — please confirm they're current before this goes live. No verified Instagram, TikTok, or X account was found.</p>
     </div>
-
-    <form class="contact-form" id="contactForm">
-      <p class="form-label">Send an enquiry (opens your email client)</p>
-      <div class="form-row">
-        <label>Name<input type="text" name="name" required></label>
-        <label>Dates<input type="text" name="dates" placeholder="e.g. 12–15 Sept"></label>
-      </div>
-      <label>Message<textarea name="message" rows="4" placeholder="Room type, number of guests, questions..."></textarea></label>
-      <button type="submit" class="btn btn-gold full">Send enquiry</button>
-    </form>
   </div>
 </section>
 
@@ -778,7 +768,6 @@ a.contact-method:hover{ color: var(--gold); }
       <span aria-hidden="true">·</span>
       <a href="tel:+251910625695">Call</a>
     </div>
-    <p class="footer-fine">Independent fan-made concept site for design purposes · Room illustrations are stylized, not real photos · Verify all contact details, rates, and links with the hotel directly.</p>
   </div>
 </footer>
 
@@ -879,7 +868,7 @@ tiltCards.forEach(card => {
 // reveal only fades their opacity here rather than setting inline transform,
 // which would otherwise permanently override the tilt.
 const revealTargets = document.querySelectorAll(
-  '.room-card, .amenity, .note-card, .about-photo, .loc-map, .contact-form'
+  '.room-card, .amenity, .note-card, .about-photo, .loc-map'
 );
 const io = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
@@ -901,23 +890,6 @@ revealTargets.forEach(el => {
   el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
   io.observe(el);
 });
-
-// ---------- Mock contact form ----------
-const form = document.getElementById('contactForm');
-if (form) {
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const data = new FormData(form);
-    const name = data.get('name') || '';
-    const dates = data.get('dates') || '';
-    const message = data.get('message') || '';
-    const subject = encodeURIComponent(`Reservation enquiry — ${name}`);
-    const body = encodeURIComponent(
-      `Name: ${name}\nDates: ${dates}\n\n${message}`
-    );
-    window.location.href = `mailto:reservations@amaduhotel.example?subject=${subject}&body=${body}`;
-  });
-}
 
 </script>
 </body>
